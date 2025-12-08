@@ -7,4 +7,4 @@
 * Keep `.gitignore` updated.
 * Periodically run `make` to build the STL files.
 * After every change, run `make` to build the STL files.
-* The make file should also make preview images of the STL files which you will view to make sure we're on the right track.
+* The make file should also make preview images of the STL files which you will view to make sure we're on the right track. Look at it from different angles to make sure it looks right.
