@@ -37,3 +37,12 @@ difference() {
 // Rotated -90 on X based on previous preview.scad hints to make it lay flat
 %color("orange", 0.5)
   iphone_ref();
+
+// 3. The Mirror (Visual only)
+// 2x2 inches = 50.8mm
+// Placed on top of the mirror mount
+%color("silver")
+  translate([0, 0, 5])
+    rotate([0, -45, 0])
+      translate([-1.5, 0, 28]) // Offset to bottom (-1.5) for 1mm mirror, slide up (28)
+        cube([1, 50.8, 50.8], center=true);
