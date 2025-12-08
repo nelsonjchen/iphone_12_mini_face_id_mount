@@ -19,28 +19,52 @@ module mirror_tray() {
   slot_d = mirror_d + tolerance; // Thickness clearance
 
   // Widen to match the mount base (70mm)
-  outer_w = 70;
+  outer_w = 56;
 
   outer_h = mirror_h + wall + 5; // Extra length at bottom for stop
   outer_d = slot_d + wall * 2;
 
   // Side supports that extend back to the base
+  // Calculated to be the side wall thickness
   side_block_w = (outer_w - slot_w) / 2;
-  side_block_d = 20; // Extend deep to hit base
+
+  // Leg extension depth
+  leg_depth = 15;
+
+  module leg_prism() {
+    // Create a triangular wedge
+    // Profile in X-Z:
+    // (0, outer_h/2) -> Top Back of Tray
+    // (0, -outer_h/2) -> Bottom Back of Tray
+    // (-leg_depth, -outer_h/2) -> The "foot" extending back
+
+    rotate([-90, 0, 0]) // Rotate to extrude along Y (width), profile in XZ
+      linear_extrude(height=side_block_w, center=true)
+        polygon(
+          points=[
+            [0, outer_h / 2],
+            [0, -outer_h / 2],
+            [-leg_depth, -outer_h / 2],
+          ]
+        );
+  }
 
   difference() {
     union() {
-      // Main Frame
+      // Main Frame (The box holding the mirror)
       cube([outer_d, outer_w, outer_h], center=true);
 
-      // Side Supports (Walls extending back)
-      // Left Side
-      translate([-side_block_d / 2 + outer_d / 2, outer_w / 2 - side_block_w / 2, 0])
-        cube([side_block_d, side_block_w, outer_h], center=true);
+      // New Triangular Legs
+      // Attaching to the back face (-X) of the main frame
+      // Centered on the side walls
 
-      // Right Side
-      translate([-side_block_d / 2 + outer_d / 2, -outer_w / 2 + side_block_w / 2, 0])
-        cube([side_block_d, side_block_w, outer_h], center=true);
+      // Left Leg
+      translate([-outer_d / 2, outer_w / 2 - side_block_w / 2, 0])
+        leg_prism();
+
+      // Right Leg
+      translate([-outer_d / 2, -(outer_w / 2 - side_block_w / 2), 0])
+        leg_prism();
     }
 
     // The Slot (open at top +Z local)
@@ -49,7 +73,8 @@ module mirror_tray() {
 
     // The Window (cut through X)
     window_size = mirror_w - 4; // 2mm lip
-    cube([side_block_d + 10, window_size, window_size], center=true);
+    // Cut through top and bottom to remove "skirt"
+    cube([outer_d + 10, window_size, outer_h + 10], center=true);
   }
 }
 
@@ -58,7 +83,7 @@ difference() {
   color("skyblue") {
     union() {
       translate([0, 0, -5])
-        cube([20, 70, 15], center=true);
+        cube([20, 68, 15], center=true);
 
       // Mirror Mount Tray
       // -45 degree angle to reflect +Z (face id) to +X (outward)
