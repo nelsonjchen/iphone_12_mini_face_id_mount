@@ -9,8 +9,8 @@ module iphone_ref() {
 // 1. The "Mount" (Just a cube for now)
 module mirror_cutout() {
   mirror_w = 70.0;
-  mirror_th = 1.2; // Slightly thicker for slot ease
-  tolerance = 0.5;
+  mirror_th = 1; // Slightly thicker for slot ease
+  tolerance = 0.;
   slot_w = mirror_th + tolerance;
 
   // Pillars to hold the mirror
@@ -21,12 +21,17 @@ module mirror_cutout() {
 
   // The Slot Cut
   // 45 degree angle for the mirror
-  // Center at [-24.75, 0, 24.75] puts bottom edge at [0,0,0]
-  translate([-24.75, 0, 24.75])
-    rotate([0, -45, 0])
-      cube([slot_w, separation  * 2 + 2, 75], center=true);
-}
+  slot_height = 75;
 
+  // Calculate offsets to place the bottom corner at [0,0,0]
+  // Rotated -45 deg: z_min is at local x=-w/2, z=-h/2
+  z_offset = (slot_height + slot_w) * sin(45) / 2;
+  x_offset = (slot_height - slot_w) * sin(45) / 2;
+
+  translate([-x_offset, 0, z_offset])
+    rotate([0, -45, 0])
+      cube([slot_w, separation * 2 + 2, slot_height], center=true);
+}
 
 // 1. The "Mount" (Just a cube for now)
 difference() {
@@ -36,7 +41,6 @@ difference() {
       // Extended back (-X) to support the shifted pillars
       translate([0, 0, -5])
         cube([20, 75, 14], center=true);
-
     }
   }
 
