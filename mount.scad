@@ -30,6 +30,11 @@ difference() {
         projection(cut=false)
           rotate([0, 90, 0]) // Rotate to Z for projection (captures X profile)
             iphone_ref();
+
+  // Face ID Clearance Cut
+  // Removes the top of the mount under the mirror to unblock the view
+  translate([0, 0, 5]) // Positioned to cut the top wall
+    cube([25, 60, 10], center=true);
 }
 
 // 2. The iPhone 12 Mini Reference
