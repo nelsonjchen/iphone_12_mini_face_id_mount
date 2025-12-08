@@ -2,7 +2,7 @@
 
 // 1. The "Mount" (Just a cube for now)
 color("skyblue")
-  cube([20, 20, 20], center=true);
+  cube([20, 70, 20], center=true);
 
 // 2. The iPhone 12 Mini Reference
 // Orange, transparent
