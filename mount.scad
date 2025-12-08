@@ -7,18 +7,49 @@ module iphone_ref() {
 }
 
 // 1. The "Mount" (Just a cube for now)
+module mirror_tray() {
+  mirror_w = 50.0;
+  mirror_h = 50.0;
+  mirror_d = 1.0;
+
+  wall = 2;
+  tolerance = 0.5; // Clearance for sliding
+
+  slot_w = mirror_w + tolerance * 2;
+  slot_d = mirror_d + tolerance; // Thickness clearance
+
+  outer_w = slot_w + wall * 2;
+  outer_h = mirror_h + wall + 5; // Extra length at bottom for stop
+  outer_d = slot_d + wall * 2;
+
+  difference() {
+    // Main Body
+    translate([0, 0, 0])
+      cube([outer_d, outer_w, outer_h], center=true);
+
+    // The Slot (open at top +Z local)
+    translate([0, 0, wall]) // Shift up so bottom wall acts as stop
+      cube([slot_d, slot_w, outer_h], center=true);
+
+    // The Window (cut through X)
+    window_size = mirror_w - 4; // 2mm lip
+    cube([outer_d + 1, window_size, window_size], center=true);
+  }
+}
+
+// 1. The "Mount" (Just a cube for now)
 difference() {
   color("skyblue") {
     union() {
       translate([0, 0, -5])
         cube([20, 70, 15], center=true);
 
-      // Mirror Mount Cube
+      // Mirror Mount Tray
       // -45 degree angle to reflect +Z (face id) to +X (outward)
-      // Spanning the whole mount (Y=70)
-      translate([0, 0, 5]) // Center in Y, moved up in Z
+      translate([0, 0, 5])
         rotate([0, -45, 0])
-          cube([2, 70, 20], center=true);
+          translate([-2.5, 0, 28]) // Position matching previous verification
+            mirror_tray();
     }
   }
 
@@ -34,7 +65,7 @@ difference() {
   // Face ID Clearance Cut
   // Removes the top of the mount under the mirror to unblock the view
   translate([0, 0, 5]) // Positioned to cut the top wall
-    cube([25, 60, 10], center=true);
+    cube([15, 55, 10], center=true);
 }
 
 // 2. The iPhone 12 Mini Reference
@@ -44,10 +75,10 @@ difference() {
   iphone_ref();
 
 // 3. The Mirror (Visual only)
-// 2x2 inches = 50.8mm
-// Placed on top of the mirror mount
+// 50x50mm
+// Placed INSIDE the tray slot
 %color("silver")
   translate([0, 0, 5])
     rotate([0, -45, 0])
-      translate([-1.5, 0, 28]) // Offset to bottom (-1.5) for 1mm mirror, slide up (28)
-        cube([1, 50.8, 50.8], center=true);
+      translate([-2.5, 0, 28 + 2]) // +2 offset to account for tray wall
+        cube([1, 50.0, 50.0], center=true);
