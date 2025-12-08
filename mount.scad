@@ -18,14 +18,30 @@ module mirror_tray() {
   slot_w = mirror_w + tolerance * 2;
   slot_d = mirror_d + tolerance; // Thickness clearance
 
-  outer_w = slot_w + wall * 2;
+  // Widen to match the mount base (70mm)
+  outer_w = 70;
+
   outer_h = mirror_h + wall + 5; // Extra length at bottom for stop
   outer_d = slot_d + wall * 2;
 
+  // Side supports that extend back to the base
+  side_block_w = (outer_w - slot_w) / 2;
+  side_block_d = 20; // Extend deep to hit base
+
   difference() {
-    // Main Body
-    translate([0, 0, 0])
+    union() {
+      // Main Frame
       cube([outer_d, outer_w, outer_h], center=true);
+
+      // Side Supports (Walls extending back)
+      // Left Side
+      translate([-side_block_d / 2 + outer_d / 2, outer_w / 2 - side_block_w / 2, 0])
+        cube([side_block_d, side_block_w, outer_h], center=true);
+
+      // Right Side
+      translate([-side_block_d / 2 + outer_d / 2, -outer_w / 2 + side_block_w / 2, 0])
+        cube([side_block_d, side_block_w, outer_h], center=true);
+    }
 
     // The Slot (open at top +Z local)
     translate([0, 0, wall]) // Shift up so bottom wall acts as stop
@@ -33,7 +49,7 @@ module mirror_tray() {
 
     // The Window (cut through X)
     window_size = mirror_w - 4; // 2mm lip
-    cube([outer_d + 1, window_size, window_size], center=true);
+    cube([side_block_d + 10, window_size, window_size], center=true);
   }
 }
 
@@ -63,9 +79,16 @@ difference() {
             iphone_ref();
 
   // Face ID Clearance Cut
-  // Removes the top of the mount under the mirror to unblock the view
-  translate([0, 0, 5]) // Positioned to cut the top wall
-    cube([15, 55, 10], center=true);
+  // Removing more material to ensure clear view
+  // 18mm wide (leaving 1mm walls on 20mm mount)
+  // Deeper cut to verify clearance
+  translate([0, 0, 10]) // Positioned to cut the top wall
+    cube([30, 55, 30], center=true);
+
+  // Bottom Cleaner Cut
+  // Slices off anything protruding below the base (Base bottom is at Z = -5 - 7.5 = -12.5)
+  translate([0, 0, -50 - 12.5])
+    cube([100, 100, 100], center=true);
 }
 
 // 2. The iPhone 12 Mini Reference
