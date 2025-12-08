@@ -7,41 +7,26 @@ module iphone_ref() {
 }
 
 // 1. The "Mount" (Just a cube for now)
-module mirror_slot() {
+module mirror_cutout() {
   mirror_w = 70.0;
-  mirror_th = 2.0; // Slightly thicker for slot ease
-  mirror_h = 70.0; // Visual height
-
+  mirror_th = 1.2; // Slightly thicker for slot ease
   tolerance = 0.5;
   slot_w = mirror_th + tolerance;
 
   // Pillars to hold the mirror
   pillar_w = 5; // Width of the side walls
-  pillar_d = 20; // Depth of the pillar
-  pillar_h = 20; // Height to support the mirror
 
   // Separation between pillars (Mirror width + tolerance)
   separation = mirror_w + tolerance;
 
-  difference() {
-    union() {
-      // Left Pillar - Moved back to support mirror
-      translate([-15, (separation + pillar_w) / 2, pillar_h / 2])
-        cube([pillar_d, pillar_w, pillar_h], center=true);
-
-      // Right Pillar - Moved back to support mirror
-      translate([-15, -(separation + pillar_w) / 2, pillar_h / 2])
-        cube([pillar_d, pillar_w, pillar_h], center=true);
-    }
-
-    // The Slot Cut
-    // 45 degree angle for the mirror
-    // Center at [-24.75, 0, 24.75] puts bottom edge at [0,0,0]
-    translate([-24.75, 0, 24.75])
-      rotate([0, -45, 0])
-        cube([slot_w, separation + pillar_w * 2 + 2, 80], center=true);
-  }
+  // The Slot Cut
+  // 45 degree angle for the mirror
+  // Center at [-24.75, 0, 24.75] puts bottom edge at [0,0,0]
+  translate([-24.75, 0, 24.75])
+    rotate([0, -45, 0])
+      cube([slot_w, separation  * 2 + 2, 75], center=true);
 }
+
 
 // 1. The "Mount" (Just a cube for now)
 difference() {
@@ -49,14 +34,14 @@ difference() {
     union() {
       // Base - Widened for 70mm mirror
       // Extended back (-X) to support the shifted pillars
-      translate([-10, 0, -5])
-        cube([40, 82, 15], center=true);
+      translate([0, 0, -5])
+        cube([20, 75, 14], center=true);
 
-      // Mirror Slot Assembly
-      translate([0, 0, 0]) // Pillars are now positioned absolutely relative to base Z=0
-        mirror_slot();
     }
   }
+
+  // Global Mirror Cutout
+  mirror_cutout();
 
   // Profile Cutout
   // Projects the phone's X-axis profile and extrudes it to create a cutter
