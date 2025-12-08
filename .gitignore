@@ -1,3 +1,4 @@
 preview*.png
 *.stl
 !reference/*.stl
+*.3mf
