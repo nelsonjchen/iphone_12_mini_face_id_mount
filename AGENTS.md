@@ -8,3 +8,4 @@
 * Periodically run `make` to build the STL files.
 * After every change, run `make` to build the STL files.
 * The make file should also make preview images of the STL files which you will view to make sure we're on the right track. Look at it from different angles to make sure it looks right.
+* I suggest for your preview images that you also render a dummy iPhone 12 mini with the mount attached to it.
