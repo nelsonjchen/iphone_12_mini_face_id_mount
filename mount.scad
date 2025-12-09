@@ -48,8 +48,8 @@ module mount_base() {
     union() {
       // Base - Widened for 70mm mirror
       // Extended back (-X) to support the shifted pillars
-      translate([0, 0, -5])
-        cube([mount_thickness, mount_width, 14], center=true);
+      translate([-5, 0, -5])
+        cube([mount_thickness, mount_width, 15], center=true);
 
       // Angled support for the mirror, pushing up
       rotate([0, -mount_angle, 0])
@@ -70,27 +70,29 @@ module mount_base() {
 
 module top_guide() {
   // Adds a guide/stop for the top of the phone
-  // Arms extend from the mount base to the stopper (Negative X direction)
+  // Central spine extending from the mount base to the stopper (Negative X direction)
+  // "Jut out the base" along the center, then "straight up"
 
-  arm_w = 6;
+  spine_width = 20;
   base_Left_X = -mount_thickness / 2; // -10
 
-  // guide_offset is distance from center. We want to go to -guide_offset.
-  // Only draw if sticking out further than the base (offset > 10)
+  // Height of the stop "finger"
+  stop_height = 20;
+
+  // only draw if sticking out
   if (guide_offset > abs(base_Left_X)) {
     color("cornflowerblue")
       union() {
-        // Arms connecting base to guide
-        // Spans from -10 to -guide_offset
-        for (ym = [-1, 1]) {
-          translate([(base_Left_X - guide_offset) / 2, ym * (mount_width / 2 - arm_w / 2), -5])
-            cube([guide_offset - abs(base_Left_X) + 0.1, arm_w, 14], center=true);
-        }
+        // 1. The Central Spine ("Jut out the base")
+        // Extends from base edge (-10) to guide_offset
+        // Aligned with base Z (-5)
+        translate([(base_Left_X - guide_offset) / 2, 0, -5])
+          cube([guide_offset - abs(base_Left_X) + 0.1, spine_width, 14], center=true);
 
-        // The stopper bar itself at the end
-        // Placed to ensure the inner face is at -guide_offset
-        translate([-guide_offset - 1.5, 0, -5])
-          cube([3, mount_width, 14], center=true);
+        // 2. The Vertical Stop ("Straight up")
+        // Positioned at the end, going up.
+        translate([-guide_offset - 1.5, 0, 0])
+          cube([3, spine_width, stop_height], center=true);
       }
   }
 }
@@ -165,13 +167,20 @@ module side_trimmer() {
 
 difference() {
   union() {
+    // Base Logic: Cut by X-profile (profile_cutter)
     difference() {
       mount_base();
       profile_cutter();
     }
-    top_guide();
+
+    // Guide Logic: Subtract the phone 3D model directly
+    difference() {
+      top_guide();
+      iphone_ref();
+    }
   }
 
+  // Common cuts
   mirror_cutout();
   face_id_cutter();
   side_trimmer();
@@ -182,7 +191,7 @@ module bottom_label() {
   // Engrave text on the bottom face
   // Bottom face is at Z = -12 (center -5, half-height 7)
   // Text runs along the Y axis
-  translate([0, 0, -12.01]) // Slight offset to ensure clean cut surface
+  translate([-5, 0, -13.01]) // Slight offset to ensure clean cut surface
     rotate([0, 0, 90])
       mirror([1, 0, 0])
         linear_extrude(height=0.6) {
