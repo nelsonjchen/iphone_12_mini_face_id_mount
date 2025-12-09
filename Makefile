@@ -4,7 +4,7 @@ all: stl previews
 
 stl: mount.stl
 
-previews: preview_iso.png preview_top.png preview_side.png preview_front.png
+previews: preview_iso.png preview_top.png preview_side.png preview_front.png preview_bottom.png
 
 mount.stl: mount.scad
 	$(OPENSCAD) -o mount.stl mount.scad
@@ -24,6 +24,10 @@ preview_side.png: mount.scad
 preview_front.png: mount.scad
 	$(OPENSCAD) -o preview_front.png --autocenter --viewall --imgsize=800,600 --view axes \
 		--camera=200,0,0,0,0,0 mount.scad
+
+preview_bottom.png: mount.scad
+	$(OPENSCAD) -o preview_bottom.png --autocenter --viewall --imgsize=800,600 --view axes \
+		--camera=0,0,-200,0,0,0 mount.scad
 
 clean:
 	rm -f mount.stl preview_*.png

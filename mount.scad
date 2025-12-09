@@ -127,6 +127,22 @@ difference() {
   profile_cutter();
   face_id_cutter();
   side_trimmer();
+  bottom_label();
+}
+
+module bottom_label() {
+  // Engrave text on the bottom face
+  // Bottom face is at Z = -12 (center -5, half-height 7)
+  // Text runs along the Y axis
+  translate([0, 0, -12.01]) // Slight offset to ensure clean cut surface
+    rotate([0, 0, 90])
+      mirror([1, 0, 0])
+        linear_extrude(height=0.6) {
+          translate([0, 3.5, 0])
+            text("iPhone 12 Mini", size=5, valign="center", halign="center");
+          translate([0, -3.5, 0])
+            text("Face ID 3D Scan Mount", size=4.5, valign="center", halign="center");
+        }
 }
 
 // -----------------------------------------------------------------------------
