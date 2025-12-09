@@ -89,6 +89,39 @@ module bottom_cleaner() {
     cube([100, 100, 100], center=true);
 }
 
+module side_trimmer() {
+  // Tapers the ends of the mount (Y-axis) to reduce bulk without cutting the mirror slot.
+  // "Opposite" taper: Wide at the TOP, Narrow at the BOTTOM.
+  // This preserves the mirror slot wall at the top.
+
+  safe_y = 37; // Pivot at the outer edge (37mm = 74mm width)
+  angle = 15;
+
+  // Pivot Z: effectively the point where the taper "starts" moving inwards as we go down.
+  // If we pivot at a high point (e.g. z=40), everything below gets cut.
+  // If we pivot at z=0, bottom gets cut, top is safe.
+  pivot_z = 0;
+
+  // Positive Y Taper (Top side in 2D view)
+  // We want to cut the bottom (negative Z relative to pivot? No, absolute Z).
+  // Rotate -15 deg: 
+  //   Top (+Z) moves +Y (Away -> Safe)
+  //   Bottom (-Z) moves -Y (In -> Cut)
+  translate([0, safe_y, pivot_z])
+    rotate([-angle, 0, 0])
+      translate([0, 50, 0])
+        cube([100, 100, 200], center=true);
+
+  // Negative Y Taper (Bottom side in 2D view)
+  // Rotate +15 deg:
+  //   Top (+Z) moves -Y (Away -> Safe)
+  //   Bottom (-Z) moves +Y (In -> Cut)
+  translate([0, -safe_y, pivot_z])
+    rotate([angle, 0, 0])
+      translate([0, -50, 0])
+        cube([100, 100, 200], center=true);
+}
+
 // -----------------------------------------------------------------------------
 // Main Assembly
 // -----------------------------------------------------------------------------
@@ -100,6 +133,7 @@ difference() {
   profile_cutter();
   face_id_cutter();
   bottom_cleaner();
+  side_trimmer();
 }
 
 // -----------------------------------------------------------------------------
