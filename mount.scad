@@ -87,11 +87,11 @@ module mount_base() {
       // Angled Mirror Support (Bottom side - with cutout for lens clearance if needed)
       difference() {
         rotate([0, -mount_angle, 0])
-          translate([0, 0, 5])
-            cube([5, mount_width, 7], center=true);
+          translate([0, 0, 4])
+            cube([5, mount_width, 9], center=true);
         rotate([0, -mount_angle, 0])
           translate([0, 0, 5])
-            cube([5, mount_width - 8, 7], center=true);
+            cube([5+1, mount_width - 8, 7+1], center=true);
       }
     }
   }
@@ -186,8 +186,9 @@ module iphone_tolerance_cutter() {
 
 module face_id_cutter() {
   // Clears view for Face ID sensors
+  // +1 for z-fighting
   translate([0, 0, 10])
-    cube([face_id_cut_w, face_id_cut_d, face_id_cut_h], center=true);
+    cube([face_id_cut_w+ 1, face_id_cut_d, face_id_cut_h], center=true);
 }
 
 module side_trimmer() {
