@@ -17,6 +17,11 @@ mirror_slot_thickness = mirror_thickness + mirror_tolerance;
 mirror_slot_length = mirror_width + mirror_length_tolerance;
 mirror_slot_width = mirror_width + mirror_tolerance;
 
+// -- Mount Base Dimensions --
+base_height = 13; // Thickness of the base block (was 10, increased for stability)
+base_top_z = 2.5; // Top surface of the base relative to origin
+base_center_z = base_top_z - (base_height / 2);
+
 // -- Mount Dimensions --
 mount_width = 80;
 mount_thickness = 20;
@@ -71,8 +76,8 @@ module mount_base() {
     union() {
       // Main Base Block
       // Extended back (-X) to support the shifted pillars
-      translate([-5, 0, -5])
-        cube([mount_thickness, mount_width, 15], center=true);
+      translate([-5, 0, base_center_z])
+        cube([mount_thickness, mount_width, base_height], center=true);
 
       // Angled Mirror Support (Top side)
       rotate([0, -mount_angle, 0])
@@ -99,8 +104,12 @@ module top_guide() {
   base_Left_X = -15; // Corresponds to mount_base geometry
 
   // Height Logic
-  g_height = 12.5;
-  g_center_z = -6.25;
+  // Align bottom with base bottom
+  base_bottom_z = base_top_z - base_height;
+  g_top_z = 0; // Keep top flush with phone surface (Z=0)
+
+  g_height = g_top_z - base_bottom_z;
+  g_center_z = g_top_z - (g_height / 2);
 
   // Only draw if guide extends beyond base
   if (guide_offset > abs(base_Left_X)) {
@@ -209,7 +218,11 @@ module sensor_patch() {
 
 module bottom_label() {
   // Engraved text on bottom
-  translate([-5, 0, -13.01])
+  // Calculate bottom Z position: Top (2.5) - Height (base_height)
+  // Text depth: 0.6mm, so we position it slightly above the bottom surface to engrave
+  label_z = base_top_z - base_height - 0.01;
+
+  translate([-5, 0, label_z])
     rotate([0, 0, 90])
       mirror([1, 0, 0])
         linear_extrude(height=0.6) {
