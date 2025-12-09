@@ -97,6 +97,26 @@ module visual_references() {
 // 3. Geometry Modules (Positive Shapes)
 // -----------------------------------------------------------------------------
 
+module taper_mask() {
+  // Creates a volume that follows the base taper and extends upwards
+  // Used to clip the mirror supports so they don't stick out
+  mask_len = 50; // Long enough to cover the whole X range
+
+  hull() {
+    // Bottom Plate (Narrow)
+    translate([-5, 0, base_top_z - base_height + 0.1])
+      rounded_cube([mask_len, mount_width - 8, 0.2], r=mount_corner_radius, center=true);
+
+    // Top Plate (Wide)
+    translate([-5, 0, base_top_z - 0.1])
+      rounded_cube([mask_len, mount_width, 0.2], r=mount_corner_radius, center=true);
+
+    // Sky Plate (Wide - extends up)
+    translate([-5, 0, 50])
+      rounded_cube([mask_len, mount_width, 0.2], r=mount_corner_radius, center=true);
+  }
+}
+
 module mount_base() {
   color("skyblue") {
     union() {
@@ -115,18 +135,24 @@ module mount_base() {
       }
 
       // Angled Mirror Support (Top side)
-      rotate([0, -mount_angle, 0])
-        translate([-2, 0, 5])
-          cube([6, mirror_housing_width, 7], center=true);
+      intersection() {
+        taper_mask();
+        rotate([0, -mount_angle, 0])
+          translate([-2, 0, 5])
+            cube([6, mirror_housing_width, 7], center=true);
+      }
 
       // Angled Mirror Support (Bottom side - with cutout for lens clearance if needed)
-      difference() {
-        rotate([0, -mount_angle, 0])
-          translate([0, 0, 4])
-            cube([5, mirror_housing_width, 9], center=true);
-        rotate([0, -mount_angle, 0])
-          translate([0, 0, 5])
-            cube([5 + 1, mirror_housing_width - 8, 7 + 1], center=true);
+      intersection() {
+        taper_mask();
+        difference() {
+          rotate([0, -mount_angle, 0])
+            translate([0, 0, 4])
+              cube([5, mirror_housing_width, 9], center=true);
+          rotate([0, -mount_angle, 0])
+            translate([0, 0, 5])
+              cube([5 + 1, mirror_housing_width - 8, 7 + 1], center=true);
+        }
       }
     }
   }
