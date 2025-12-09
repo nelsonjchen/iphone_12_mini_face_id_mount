@@ -50,6 +50,13 @@ This project uses a `Makefile` to automate the generation of STL files and previ
     make clean
     ```
 
+## Printing Settings
+
+-   **Layer Height**: 0.16mm Standard @BBL
+-   **Variable Layer Height**: Enabled (Adaptive)
+    -   When applying variable layer height, move the slider all the way to "Quality".
+
+
 ## File Structure
 
 -   `mount.scad`: The core parametric design file.
