@@ -3,7 +3,8 @@
 // -----------------------------------------------------------------------------
 
 // Mirror Dimensions
-mirror_width = 70.0;
+// Mirror Dimensions
+mirror_width = 75.2;
 mirror_thickness = 1; // Slightly thicker for slot ease
 tolerance = 0.5;
 mirror_slot_thickness = mirror_thickness + tolerance;
@@ -13,7 +14,7 @@ mirror_slot_length = 75;
 phone_fit_tolerance = 0.5;
 
 // Mount Geometry
-mount_width = 74;
+mount_width = 80;
 mount_thickness = 20;
 mirror_slot_width = mirror_width + tolerance;
 mount_angle = 45;
@@ -88,7 +89,7 @@ module side_trimmer() {
   // "Opposite" taper: Wide at the TOP, Narrow at the BOTTOM.
   // This preserves the mirror slot wall at the top.
 
-  safe_y = 37; // Pivot at the outer edge (37mm = 74mm width)
+  safe_y = 40; // Pivot at the outer edge (40mm = 80mm width)
   angle = 15;
 
   // Pivot Z: effectively the point where the taper "starts" moving inwards as we go down.
