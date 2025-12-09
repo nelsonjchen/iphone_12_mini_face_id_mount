@@ -6,9 +6,12 @@
 // Mirror Dimensions
 mirror_width = 75.2;
 mirror_thickness = 1; // Slightly thicker for slot ease
-tolerance = 0.5;
-mirror_slot_thickness = mirror_thickness + tolerance;
-mirror_slot_length = 75;
+
+mirror_tolerance = 0.5;
+mirror_length_tolerance = 0.5;
+
+mirror_slot_thickness = mirror_thickness + mirror_tolerance;
+mirror_slot_length = mirror_width + mirror_length_tolerance;
 
 // Fit Dimensions
 phone_fit_tolerance = 0.5;
@@ -16,7 +19,7 @@ phone_fit_tolerance = 0.5;
 // Mount Geometry
 mount_width = 80;
 mount_thickness = 20;
-mirror_slot_width = mirror_width + tolerance;
+mirror_slot_width = mirror_width + mirror_tolerance;
 mount_angle = 45;
 
 // Cutout Dimensions
