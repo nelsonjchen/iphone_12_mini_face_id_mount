@@ -23,9 +23,13 @@ base_top_z = 2.5; // Top surface of the base relative to origin
 base_center_z = base_top_z - (base_height / 2);
 
 // -- Mount Dimensions --
+mount_corner_radius = 3;
 mount_wall_thickness = 2.4;
-mount_width = 80;
+// mount_width = 80; // Old width
 mirror_housing_width = mirror_width + (2 * mount_wall_thickness);
+mount_width = mirror_housing_width; // Matched to housing
+// Tapers the sides to reduce bulk
+// safe_y = max(mount_width, mirror_housing_width) / 2; // Was used for calculation
 mount_thickness = 20;
 mount_angle = 45;
 
@@ -40,8 +44,28 @@ face_id_cut_h = 30;
 face_id_cut_d = 60;
 
 // -----------------------------------------------------------------------------
-// 2. Helper Modules (Visuals & References)
+// 3. Helper Modules (Visuals & References)
 // -----------------------------------------------------------------------------
+
+module rounded_cube(size, r, center = true) {
+  // Beveled/Rounded Box (Z-axis edges rounded)
+  width = size[0];
+  depth = size[1];
+  height = size[2];
+
+  tx = center ? -width / 2 : 0;
+  ty = center ? -depth / 2 : 0;
+  tz = center ? -height / 2 : 0;
+
+  translate([tx, ty, tz]) {
+    hull() {
+      translate([r, r, 0]) cylinder(r=r, h=height, $fn=32);
+      translate([width - r, r, 0]) cylinder(r=r, h=height, $fn=32);
+      translate([width - r, depth - r, 0]) cylinder(r=r, h=height, $fn=32);
+      translate([r, depth - r, 0]) cylinder(r=r, h=height, $fn=32);
+    }
+  }
+}
 
 module iphone_ref() {
   // Shifts the reference STL so the top of the phone matches guide_offset
@@ -78,8 +102,17 @@ module mount_base() {
     union() {
       // Main Base Block
       // Extended back (-X) to support the shifted pillars
-      translate([-5, 0, base_center_z])
-        cube([mount_thickness, mount_width, base_height], center=true);
+      // Tapered hull construction
+      hull() {
+        // Top plate (full width)
+        translate([-5, 0, base_top_z - 0.1])
+          rounded_cube([mount_thickness, mount_width, 0.2], r=mount_corner_radius, center=true);
+
+        // Bottom plate (tapered width)
+        // Taper 15 degrees over 15mm height => ~4mm per side => 8mm total reduction
+        translate([-5, 0, base_top_z - base_height + 0.1])
+          rounded_cube([mount_thickness, mount_width - 8, 0.2], r=mount_corner_radius, center=true);
+      }
 
       // Angled Mirror Support (Top side)
       rotate([0, -mount_angle, 0])
@@ -193,25 +226,6 @@ module face_id_cutter() {
     cube([face_id_cut_w + 1, face_id_cut_d, face_id_cut_h], center=true);
 }
 
-module side_trimmer() {
-  // Tapers the sides to reduce bulk
-  safe_y = max(mount_width, mirror_housing_width) / 2;
-  angle = 15;
-  pivot_z = 0;
-
-  // Top side taper
-  translate([0, safe_y, pivot_z])
-    rotate([-angle, 0, 0])
-      translate([0, 50, 0])
-        cube([100, 100, 200], center=true);
-
-  // Bottom side taper
-  translate([0, -safe_y, pivot_z])
-    rotate([angle, 0, 0])
-      translate([0, -50, 0])
-        cube([100, 100, 200], center=true);
-}
-
 module sensor_patch() {
   // Clears material near the notch area
   patch_w = 40;
@@ -262,7 +276,6 @@ module make_mount() {
     // 3. Global Subtractions
     mirror_cutout();
     face_id_cutter();
-    side_trimmer();
     bottom_label();
   }
 }
