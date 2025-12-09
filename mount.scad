@@ -38,10 +38,14 @@ module mount_base() {
       translate([0, 0, -5])
         cube([mount_thickness, mount_width, 14], center=true);
 
-      // Angled support for the mirror
+      // Angled support for the mirror, pushing up
       rotate([0, -mount_angle, 0])
-        translate([-1, 0, 0])
-          cube([8, mount_width, 15], center=true);
+        translate([-3, 0, 0])
+          cube([7, mount_width, 15], center=true);
+      // Angled support for the mirror, pushing down
+      rotate([0, -mount_angle, 0])
+        translate([0, 0, 0])
+          cube([4, mount_width, 5], center=true);
     }
   }
 }
