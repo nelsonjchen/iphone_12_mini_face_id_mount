@@ -17,16 +17,6 @@ The iPhone 12 mini is an ideal candidate for this because it can often be found 
 -   [iPhone 12 Mini (Amazon)](https://amzn.to/4aF0Vkh)
     - Of course, you can get it from other places like eBay.
 
-## Visuals
-
-| ISO View | Top View |
-| :---: | :---: |
-| ![ISO View](preview_iso.png) | ![Top View](preview_top.png) |
-
-| Side View | Front View |
-| :---: | :---: |
-| ![Side View](preview_side.png) | ![Front View](preview_front.png) |
-
 ## Prerequisites
 
 To build and modify this project, you will need:
