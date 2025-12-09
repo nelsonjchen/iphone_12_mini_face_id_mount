@@ -15,7 +15,7 @@ mirror_slot_length = mirror_width + mirror_length_tolerance;
 
 // Fit Dimensions
 phone_fit_tolerance = 0.25;
-guide_offset = 20; // Distance to the top of the phone guide
+guide_offset = 21.5; // Distance to the top of the phone guide
 
 // Mount Geometry
 mount_width = 80;
