@@ -19,6 +19,12 @@ The iPhone 12 mini is an ideal candidate for this because it can often be found 
 -   [iPhone 12 Mini (Amazon)](https://amzn.to/4aF0Vkh)
     - Of course, you can get it from other places like eBay.
 
+## Ready to Print?
+
+Use `./mount.stl` for printing.
+
+Want to build it yourself? Follow the instructions below.
+
 ## Prerequisites
 
 To build and modify this project, you will need:
