@@ -17,6 +17,10 @@ mirror_slot_thickness = mirror_thickness + mirror_tolerance;
 mirror_slot_length = mirror_width + mirror_length_tolerance;
 mirror_slot_width = mirror_width + mirror_tolerance;
 
+// -- Storage Slot Configuration --
+mirror_storage_depth = 12; // How deep the storage slot goes
+mirror_storage_x_offset = -6; // X position of the vertical storage slot
+
 // -- Mount Base Dimensions --
 base_height = 15; // Thickness of the base block
 base_top_z = 2.5; // Top surface of the base relative to origin
@@ -90,8 +94,14 @@ module visual_references() {
     translate([x_offset_vis, 0, z_offset_vis])
       rotate([0, -mount_angle, 0])
         cube([mirror_thickness, mirror_width, mirror_width], center=true);
+
+    // Storage Mirror Reference (Ghosted - Storage)
+    color("White", 0.15)
+      translate([mirror_storage_x_offset, 0, base_top_z + (mirror_width / 2) - mirror_storage_depth])
+        cube([mirror_thickness, mirror_width, mirror_width], center=true);
   }
 }
+// End of visual_references
 
 // -----------------------------------------------------------------------------
 // 3. Geometry Modules (Positive Shapes)
@@ -222,6 +232,17 @@ module mirror_cutout() {
       cube([mirror_slot_thickness, mirror_slot_width, mirror_slot_length], center=true);
 }
 
+module mirror_storage_slot() {
+  // Vertical slot for storing the mirror
+  // Extends from the bottom of the defined depth upwards to infinity (or 50mm)
+  // to ensure the top is open/uncapped.
+  slot_bottom_z = base_top_z - mirror_storage_depth;
+  height = 50;
+
+  translate([mirror_storage_x_offset, 0, slot_bottom_z + (height / 2)])
+    cube([mirror_slot_thickness, mirror_slot_width, height], center=true);
+}
+
 module profile_cutter() {
   // Projects the phone's X-axis profile and extrudes it to create a cutter
   // Used to shape the bed of the mount to the phone's curve
@@ -322,6 +343,7 @@ module make_mount() {
 
     // 3. Global Subtractions
     mirror_cutout();
+    mirror_storage_slot();
     face_id_cutter();
     bottom_label();
   }
