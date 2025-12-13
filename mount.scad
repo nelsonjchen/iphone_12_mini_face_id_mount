@@ -47,6 +47,11 @@ face_id_cut_w = 30;
 face_id_cut_h = 30;
 face_id_cut_d = 60;
 
+// -- Visualization Flags (Override via Command Line) --
+show_phone_ref = true;
+show_usage_mirror = true;
+show_storage_mirror = true;
+
 // -----------------------------------------------------------------------------
 // 2. Helper Modules (Visuals & References)
 // -----------------------------------------------------------------------------
@@ -82,26 +87,31 @@ module iphone_ref() {
 
 module visual_references() {
   // iPhone 12 Mini Reference (Orange, transparent)
-  %color("orange", 0.5)
-    iphone_ref();
+  if (show_phone_ref) {
+    %color("orange", 0.5)
+      iphone_ref();
+  }
 
   // Mirror Reference (Silver, visual only)
-  %color("silver") {
-    // Calculate visual position (same logic as cutout)
-    z_offset_vis = (mirror_width + mirror_thickness) * sin(mount_angle) / 2;
-    x_offset_vis = -(mirror_width - mirror_thickness) * sin(mount_angle) / 2;
+  if (show_usage_mirror) {
+    %color("silver") {
+      // Calculate visual position (same logic as cutout)
+      z_offset_vis = (mirror_width + mirror_thickness) * sin(mount_angle) / 2;
+      x_offset_vis = -(mirror_width - mirror_thickness) * sin(mount_angle) / 2;
 
-    translate([x_offset_vis, 0, z_offset_vis])
-      rotate([0, -mount_angle, 0])
-        cube([mirror_thickness, mirror_width, mirror_width], center=true);
+      translate([x_offset_vis, 0, z_offset_vis])
+        rotate([0, -mount_angle, 0])
+          cube([mirror_thickness, mirror_width, mirror_width], center=true);
+    }
+  }
 
-    // Storage Mirror Reference (Ghosted - Storage)
-    color("White", 0.15)
+  // Storage Mirror Reference (Silver)
+  if (show_storage_mirror) {
+    %color("silver")
       translate([mirror_storage_x_offset, 0, base_top_z + (mirror_width / 2) - mirror_storage_depth])
         cube([mirror_thickness, mirror_width, mirror_width], center=true);
   }
 }
-// End of visual_references
 
 // -----------------------------------------------------------------------------
 // 3. Geometry Modules (Positive Shapes)
